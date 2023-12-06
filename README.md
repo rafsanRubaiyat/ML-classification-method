@@ -24,4 +24,4 @@ We obtained a dataset containing information on academic performances, social ch
 Binary Response: ‘higher’ “Yes”: 955 “No”: 89 
 
 ### How does the data look like? 
-<img src="https://rb.gy/8cc7lf" alt="Dataset Head">
+<img src="https://ibb.co/p1Pr0Pd" alt="Dataset Head">
