@@ -24,4 +24,4 @@ We obtained a dataset containing information on academic performances, social ch
 Binary Response: ‘higher’ “Yes”: 955 “No”: 89 
 
 ### How does the data look like? 
-<img src="[https://www.w3schools.com/images/w3schools_green.jpg](https://lh3.googleusercontent.com/keep-bbsk/AG3SVnD4RMgiq0kMq6jmeCEwZdJweu9ASKIYVtoTb-WLC9G2OXZHKIKxg_PpysPz-Hsi-Ze9Ej3omoTVlz8-xU5o2XWNMDXJK0HYlWONK2H1sujeFcua=s2048)https://lh3.googleusercontent.com/keep-bbsk/AG3SVnD4RMgiq0kMq6jmeCEwZdJweu9ASKIYVtoTb-WLC9G2OXZHKIKxg_PpysPz-Hsi-Ze9Ej3omoTVlz8-xU5o2XWNMDXJK0HYlWONK2H1sujeFcua=s2048" alt="Dataset Head">
+<img src="https://www.w3schools.com/images/w3schools_green.jpg](https://lh3.googleusercontent.com/keep-bbsk/AG3SVnD4RMgiq0kMq6jmeCEwZdJweu9ASKIYVtoTb-WLC9G2OXZHKIKxg_PpysPz-Hsi-Ze9Ej3omoTVlz8-xU5o2XWNMDXJK0HYlWONK2H1sujeFcua=s2048)https://lh3.googleusercontent.com/keep-bbsk/AG3SVnD4RMgiq0kMq6jmeCEwZdJweu9ASKIYVtoTb-WLC9G2OXZHKIKxg_PpysPz-Hsi-Ze9Ej3omoTVlz8-xU5o2XWNMDXJK0HYlWONK2H1sujeFcua=s2048" alt="Dataset Head">
