@@ -1,35 +1,27 @@
 ---
-title: "Classification Methods: Do students desire to continue with higher education?"
+title: "STAT617_Final_Project_Analysis"
 author: "Burke Gray, Ryan McAllister, Rafsan Siddiqui"
 date: "2023-11-22"
 output: html_document
 ---
 
-#Background:
-##We obtained a dataset containing information on academic performances, social characteristics, 
-##and demographics of students in two Portuguese high schools. 
-
-##Our objective is to utilize classification methods to predict whether  
-##a student would like to go tocollege based off many of the other features in our dataset
-
-#Data Source: UC Irvine Machine Learning Repository
-## https://archive.ics.uci.edu/dataset/320/student+performance 
 
 #Read Data & Merge
 ```{r}
-d1=read.table("/student-mat.csv",sep=";",header=TRUE)
-d2=read.table("/student-por.csv",sep=";",header=TRUE)
+d1=read.table("student-mat.csv",sep=";",header=TRUE)
+d2=read.table("student-por.csv",sep=";",header=TRUE)
 
 student=merge(d1,d2, all=TRUE)
 print(nrow(student))
+
 ```
 
 #Data Cleaning
 ```{r}
-#duplicated(student) #check for duplicates
-#str(student) #examine variable names & types
+duplicated(student) #check for duplicates
+str(student) #examine variable names & types
 #head(student)
-#any(is.na(student)) #check for missing values
+any(is.na(student)) #check for missing values
 #colnames(student)
 
 #Remove unwanted variables by column index
@@ -144,38 +136,112 @@ favstats(student$G3)
 
 boxplot(G3 ~ higher, student)
 
-barplot(table(student$Medu), col = rainbow(6), border = NA, cex.names = 0.8, xlab = "Mother's Education Level", ylab = "Count", ylim = c(0,500))
-barplot(table(student$Fedu), col = rainbow(6), border = NA, cex.names = 0.8, xlab = "Father's Education Level", ylab = "Count", ylim = c(0,500))
-barplot(table(student$Mjob), col = rainbow(6), border = NA, cex.names = 0.8, xlab = "Mother's Occupation", ylab = "Count", ylim = c(0,700))
-barplot(table(student$Fjob), col = rainbow(6), border = NA, cex.names = 0.8, xlab = "Father's Occupation", ylab = "Count", ylim = c(0,700))
-barplot(table(student$Walc), col = rainbow(6), border = NA, cex.names = 0.8, xlab = "Weekend Alcohol Consumption", ylab = "Count", ylim = c(0,500))
-barplot(table(student$famrel), col = rainbow(6), border = NA, cex.names = 0.8, xlab = "Quality of Family Relationship", ylab = "Count", ylim = c(0,600))
+barplot(table(student$Medu), col = rainbow(6), border = NA, cex.names = 0.8, xlab = "Mother's Education Level", ylab = "Count", ylim = c(0,160))
+barplot(table(student$Fedu), col = rainbow(6), border = NA, cex.names = 0.8, xlab = "Father's Education Level", ylab = "Count", ylim = c(0,160))
+barplot(table(student$Mjob), col = rainbow(6), border = NA, cex.names = 0.8, xlab = "Mother's Occupation", ylab = "Count", ylim = c(0,160))
+barplot(table(student$Fjob), col = rainbow(6), border = NA, cex.names = 0.8, xlab = "Father's Occupation", ylab = "Count", ylim = c(0,160))
+barplot(table(student$Walc), col = rainbow(6), border = NA, cex.names = 0.8, xlab = "Weekend Alcohol Consumption", ylab = "Count", ylim = c(0,100))
+barplot(table(student$famrel), col = rainbow(6), border = NA, cex.names = 0.8, xlab = "Quality of Family Relationship", ylab = "Count", ylim = c(0,150))
 
 ?pie
 pie(table(student$higher), main = "Response Variable - Do you want to go to college after high school?", labels = c('no: 89','yes: 191'))
 #table(student$higher)
+
+#additional explanatory analysis for paper
+#numerical variables
+student[which(student$age == 22),] 
+nrow(student[which(student$age == 15 & student$higher == 1),])/nrow(student[which(student$age == 15),])
+student[which(student$G3 == 19),]
+
+#categorical variables
+nrow(student[which(student$Medu == "college"),])
+nrow(student[which(student$Fedu == "college"),])
+nrow(student[which(student$Mjob == "teacher"),])
+nrow(student[which(student$Fjob == "teacher"),])
 ```
 
 #Discriminant Analysis
 ```{r}
-#We cannot satisfy multivariate normal assumption for LDA/QDA, thus discriminant analysis will not work.
-```
+numstud <- student[,c(2,11,16,24,25)] # dataset with just numeric indep. variables
+head(numstud)
+nrow(numstud)
 
+install.packages("MVN")
+library(MVN)
+
+# Assuming your data is in a data frame called 'mydata'
+# and the variables are named var1, var2, var3, var4
+
+# Subset the data to include only the variables of interest
+variables_of_interest <- numstud[, c("age", "failures", "absences", "G3")]
+
+mardia_results <- mvn(variables_of_interest, mvnTest = "mardia")
+
+# View the results
+print(mardia_results$multivariateNormality)
+
+library(biotools)
+library(MASS)
+set.seed(202312)
+boxM(numstud[,-3],numstud[,3])
+# Since our p-value < 0.05, we reject H0. We have convincing evidence to suggest that the covariance 
+# matricies differ between the two populations. We will use QDA to continue
+
+set.seed(202312)
+qdafit <- qda(higher~., data=numstud, method='mle')
+qdafit
+#predict(qdafit)$class
+tab5 = table(predict(qdafit)$class,numstud$higher)
+tab5
+print(calc <- (tab5[2,1]+tab5[1,2])/(tab5[2,1]+tab5[1,2]+tab5[1,1]+tab5[2,2]))
+
+# With LOOCV
+qdafit2 <- qda(higher~., data=numstud, method='mle', CV=TRUE)
+qdafit2
+tab6 = table(qdafit2$class,numstud$higher)
+tab6
+print(calc <- (tab6[2,1]+tab6[1,2])/(tab6[2,1]+tab6[1,2]+tab6[1,1]+tab6[2,2]))
+
+# With 10 fold CV
+library(ipred)
+ip.qda = function(object, newdata) { #define prediction method
+predict(object, newdata = newdata)$class
+}
+qdafit3 = errorest(higher ~ ., data=numstud, model=qda, estimator="cv",
+est.para=control.errorest(k=10, predictions = TRUE), predict=ip.qda)
+qdafit3
+```
 
 #Logistic Regression
 ```{r}
 library(car)
-set.seed(202312)
+
+set.seed(202312) #for reproducible results
+
+#70/30 Testing/Training Split
+#?sample
+train = sample(1:nrow(student), nrow(student)*.7) #creates a sequence of numbers from 1 to the number of rows in student, and then randomly samples 70% of them. This gives us the indices of our training observations.
+
+traindata = student[train,]
+traindata
+
+testdata = student[-train,]
+testdata
 
 #?glm
-log.reg.fit <- glm(higher ~ ., family = binomial, data = student)
+log.reg.fit <- glm(higher ~ ., family = binomial, data = traindata)
 summary(log.reg.fit)
 
 vif(log.reg.fit) #multicollinearity assumption check
 # Assumption violated, there are multiple variables with VIF values above 5.
 # We will remove them and see if the assumption can be met.
 
-log.reg.fit2 <- glm(higher ~ sex+age+address+famsize+Pstatus+failures+schoolsup+famsup+tutoring+activities+internet+romantic+absences+G3, family = binomial, data = student)
+# Old model with whole data set
+# log.reg.fit2 <- glm(higher ~ sex+age+address+famsize+Pstatus+failures+schoolsup+famsup+tutoring+activities+internet+romantic+absences+G3, family = binomial, data = student)
+# summary(log.reg.fit2)
+
+# Model using training data set
+log.reg.fit2 <- glm(higher ~ sex+address+famsize+Pstatus+schoolsup+famsup+tutoring+internet+romantic+G3, family = binomial, data = traindata)
 summary(log.reg.fit2)
 
 vif(log.reg.fit2)
@@ -183,12 +249,21 @@ vif(log.reg.fit2)
 # assumption is met. 
 
 #using stepwise by AIC criteria
-?step
+#?step
 step.log.reg.fit <- step(log.reg.fit2, direction = "both")
 
-log.reg.fit3 <- glm(higher ~ sex + age + address + failures + tutoring + activities + G3, family = binomial, data = student)
+# Model on whole dataset
+# log.reg.fit3 <- glm(higher ~ sex + age + address + failures + tutoring + activities + G3, family = binomial, data = student)
+
+# Model on training data set
+log.reg.fit3 <- glm(higher ~ address + famsup + tutoring + G3, family = binomial, data = traindata)
 
 summary(log.reg.fit3)
+
+log.reg.pred <- predict(log.reg.fit3, newdata=testdata, type="response")
+log.reg.pred2 <- ifelse(log.reg.pred > 0.5,1,0)
+tablog <- table(log.reg.pred2, student[-train,"higher"])
+print(calc <- (tablog[2,1]+tablog[1,2])/(tablog[2,1]+tablog[1,2]+tablog[1,1]+tablog[2,2]))
 
 # Heteroscedasticity not an issue b/c no linear relationship assumed
 # and logistic models are robust to heteroscedasticity. 
@@ -198,7 +273,7 @@ summary(log.reg.fit3)
 # Check variable importance of logistic model
 library(caret)
 varImp(log.reg.fit3)
-# The most important variable is age, then tutoring, G3, address, etc.
+# The most important variable is G3, then tutoring, famsup, then address
 
 #McFadden's Rsq
 #install.packages('pscl')
@@ -214,13 +289,13 @@ set.seed(202312) #for reproducible results
 
 #70/30 Testing/Training Split
 #?sample
-train = sample(1:nrow(student), nrow(student)*.7) #creates a sequence of numbers from 1 to the number of rows in student, and then randomly samples 70% of them. This gives us the indices of our training observations.
+#train = sample(1:nrow(student), nrow(student)*.7) #creates a sequence of numbers from 1 to the number of rows in student, and then randomly samples 70% of them. This gives us the indices of our training observations.
 
-traindata = student[train,]
-traindata
+#traindata = student[train,]
+#traindata
 
-testdata = student[-train,]
-testdata
+#testdata = student[-train,]
+#testdata
 
 tree.student = tree(higher ~., student)
 summary(tree.student)
@@ -271,6 +346,8 @@ set.seed(202312)
 bag.student=randomForest(higher~.,data=student,subset=train,mtry=24,importance=TRUE, proximity = T) #bagging
 bag.student
 yhat.bag = predict(bag.student,newdata=student[-train,])
+tab.rf2 <- table(yhat.bag, student[-train,"higher"])
+print(calc <- (tab.rf2[2,1]+tab.rf2[1,2])/(tab.rf2[2,1]+tab.rf2[1,2]+tab.rf2[1,1]+tab.rf2[2,2]))
 plot(yhat.bag, student.test)
 importance(bag.student) 
 varImpPlot(bag.student)
@@ -281,8 +358,9 @@ m = M/3 = 8 (ntrees = 500)
 set.seed(202312)
 rf1.student=randomForest(higher~.,data=student,subset=train,mtry=8,importance=TRUE, proximity = T) 
 rf1.student
-yhat.rf1 = predict(rf1.student,newdata=student[-train,])
-plot(yhat.rf1, student.test)
+yhat.rf8 = predict(rf1.student,newdata=student[-train,])
+tab.rf8 <- table(yhat.rf8, student[-train,"higher"])
+print(calc <- (tab.rf8[2,1]+tab.rf8[1,2])/(tab.rf8[2,1]+tab.rf8[1,2]+tab.rf8[1,1]+tab.rf8[2,2]))
 importance(rf1.student) 
 varImpPlot(rf1.student)
 ```
@@ -292,8 +370,9 @@ m = sqrt(M) = 5 (ntrees = 500)
 set.seed(202312)
 rf1.student=randomForest(higher~.,data=student,subset=train,mtry=5,importance=TRUE, proximity = T) 
 rf1.student
-yhat.rf1 = predict(rf1.student,newdata=student[-train,])
-plot(yhat.rf1, student.test)
+yhat.rf5 = predict(rf1.student,newdata=student[-train,])
+tab.rf5 <- table(yhat.rf5, student[-train,"higher"])
+print(calc <- (tab.rf5[2,1]+tab.rf5[1,2])/(tab.rf5[2,1]+tab.rf5[1,2]+tab.rf5[1,1]+tab.rf5[2,2]))
 importance(rf1.student) 
 varImpPlot(rf1.student)
 ```
@@ -319,12 +398,14 @@ lines(1:rf5.student$ntree, rf5.student$err.rate[,1], type = "l", col = "orange")
 m = sqrt(M) = 8 (ntrees = 95)
 ```{r}
 set.seed(202312)
-rf1.student=randomForest(higher~.,data=student,subset=train,mtry=8, ntree = 95, importance=TRUE, proximity = T) 
-rf1.student
-yhat.rf1 = predict(rf1.student,newdata=student[-train,])
-plot(yhat.rf1, student.test)
-importance(rf1.student) 
-varImpPlot(rf1.student)
+rf8.student=randomForest(higher~.,data=student,subset=train,mtry=8, ntree = 95, importance=TRUE, proximity = T) 
+rf8.student
+yhat.rf8 = predict(rf8.student,newdata=student[-train,])
+tab.rf8 <- table(yhat.rf8, student[-train,"higher"])
+print(calc <- (tab.rf8[2,1]+tab.rf8[1,2])/(tab.rf8[2,1]+tab.rf8[1,2]+tab.rf8[1,1]+tab.rf8[2,2]))
+plot(yhat.rf8, student.test)
+importance(rf8.student) 
+varImpPlot(rf8.student)
 ```
 
 #Support Vector Machines (SVM)
@@ -405,12 +486,16 @@ Comparison: The misclassification rate for SVM (using Kernel Density Classificat
 #install.packages('neuralnet')
 library(neuralnet)
 
-y = as.numeric(as.matrix(dumstud[,72]))
+# Create a dataset with the numeric variables normalized between 0 and 1
+dumstudscaled <- dumstud
+dumstudscaled[, c(70,71,73,74)] <- scale(dumstud[, c(70,71,73,74)], center = FALSE, scale = apply(dumstud[, c(70,71,73,74)], 2, function(x) diff(range(x))))
 
-#dumstud$higher[which(dumstud$higher == 0)]
-#dumstud$higher[which(dumstud$higher == 1)]
+y = as.numeric(as.matrix(dumstudscaled[,72]))
 
-x = as.numeric(as.matrix(dumstud[,-72]))
+#dumstudscaled$higher[which(dumstudscaled$higher == 0)]
+#dumstudscaled$higher[which(dumstudscaled$higher == 1)]
+
+x = as.numeric(as.matrix(dumstudscaled[,-72]))
 x = matrix(as.numeric(x), ncol = 73)
 dim(x)
 
@@ -418,38 +503,27 @@ df = data.frame(cbind(x,y))
 dim(df)
 str(df)
 
+# To change neural network size, use the hidden option. Ex 3 hidden layers, 8 nodes each -> hidden = c(8,8,8)
+# Tried hidden = c(8,8,8), c(8,8), c(4,4,4), c(4,4), c(8), & c(4). 
 set.seed(202312)
-nn = neuralnet(y~ V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10 + V11 + V12 + V13 + V14 + V15 + V16 + V17 + V18 + V19 + V20 + V21 + V22 + V23 + V24 + V25 + V26 + V27 + V28 + V29 + V30 + V31 + V32 + V33 + V34 + V35 + V36 + V37 + V38 + V39 + V40 + V41 + V42 + V43 + V44 + V45 + V46 + V47 + V48 + V49 + V50 + V51 + V52 + V53 + V54 + V55 + V56 + V57 + V58 + V59 + V60 + V61 + V62 + V63 + V64 + V65 + V66 + V67 + V68 + V69 + V70 + V71 + V72 + V73, data = df, hidden = 3)
+nn1 = neuralnet(y~ V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10 + V11 + V12 + V13 + V14 + V15 + V16
+ + V17 + V18 + V19 + V20 + V21 + V22 + V23 + V24 + V25 + V26 + V27 + V28 + V29 + V30 + V31 + V32 + V33
+ + V34 + V35 + V36 + V37 + V38 + V39 + V40 + V41 + V42 + V43 + V44 + V45 + V46 + V47 + V48 + V49 + V50
+ + V51 + V52 + V53 + V54 + V55 + V56 + V57 + V58 + V59 + V60 + V61 + V62 + V63 + V64 + V65 + V66 + V67
+ + V68 + V69 + V70 + V71 + V72 + V73, data = df, hidden = c(4))
 
-plot(nn)
+plot(nn1)
 
-yy = nn$net.result[[1]]
+yy1 = nn1$net.result[[1]]
 
 yhat = matrix(0,length(y),1)
-yhat[which(yy > mean(yy))] = 1
-yhat[which(yy <= mean(yy))] = 0
+yhat[which(yy1 > mean(yy1))] = 1
+yhat[which(yy1 <= mean(yy1))] = 0
 print(tab4 <- table(y,yhat))
 print(calc <- (tab4[2,1]+tab4[1,2])/(tab4[2,1]+tab4[1,2]+tab4[1,1]+tab4[2,2])) #mis-classification rate
+
+# Having 1 hidden layer with 4 nodes seems to do a good job with only a 2.5% misclassification rate.
+# All of the more complex models have perfect prediction, which leads me to believe this could be 
+# due to overfitting. 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
