@@ -23,5 +23,38 @@ We obtained a dataset containing information on academic performances, social ch
 1,044 observations; 33 total variables 
 Binary Response: ‘higher’ “Yes”: 955 “No”: 89 
 
-### How does the data look like? 
-<img src="https://ibb.co/p1Pr0Pd" alt="Dataset Head">
+### Findings:
+#### Method	and their Misclassification Error Rates: 
+Ordinary QDA 		0.2643
+QDA With Leave One Out Cross-Validation		0.2786
+QDA With 10-fold Cross-Validation		0.2857
+Logistic regression (Predictors= address, famsup, tutoring, G3)	0.2738
+Classification tree (unpruned) 	0.0833
+Classification tree (pruned, 4 terminal nodes)	0.2262
+Random Forest (m=24, ntrees=500)	0.1786
+Random Forest (m=8, ntrees=95)	0.2143
+Support Vector Machines (Cost=5) 	0.2737
+Naive Bayes Classifier	0.1428
+Neural Networks (4 Hidden Layers)	0.0178
+
+We implemented the ordinary QDA without cross-validations. Hence, among the three QDA methods, it has the lowest error rate. QDA with leave-one-out cross-validation used almost all the data for testing, resulting in a lower error rate than QDA with 10-fold cross-validation. 
+
+The higher error rate for Logistic regression is logical considering the architecture of the method itself. It assumes a simple linear relationship between predictors and the log-odds of the outcome, hence it performs poorly when the true relationship is non-linear or complex. It’s also sensitive to outliers, and extreme values can influence the model's coefficients. Compared to other methods such as trees or random forests, it’s generally less accurate. 
+
+The unpruned classification tree performed significantly better than our pruned tree. However, this could be because our dataset is largely homogeneous, so although the unpruned tree tends to overfit the data, the performance on the test data was very good. It’s hard to conclude that the performances for the unpruned and the pruned would vary so much for other datasets. Also, when we look at the results from the random forests, the overfitting pattern becomes more evident. In contrast, with a very simple model with only 4 terminal nodes, the pruned tree demonstrated a pretty good performance.   
+
+The random forest with m=24 and ntrees=500 is likely to have less error than our optimal random forest with m=8 and ntrees=95 because it employs a larger number of decision trees and explores a broader set of features at each split, thus resulting in a more robust and accurate model. 
+
+We have picked the optimal cost for our SVM considering the error rate and the margin width. However, the performance of the SVM model is worse than most of the other methods. Tuning the hyperparameters such as regularization parameters, and kernel-specific parameters may boost the performance more.
+ 
+In contrast, the Naive Bayes Classifier has demonstrated impressive performance on our original dataset. The method simply assumes that the features are conditionally independent given the class label (Rish, I., 2001), and both the number of observations and features of our dataset are small. These might have played some role in the performance of this classifier method. 
+
+Finally, with little wonder, our Neural Networks model outperformed every method by a big margin. By design, Neural Networks are inherently non-linear models, can handle complex datasets and complex relationships among variables. It’s proven that Neural Network almost always performs better than most of the classification techniques.
+
+#### Methods and the Most Important Features
+Logistic regression 	1) G3; 2) Tutoring; 3) Address; 4) Famsup
+Random Forest (m=8, ntrees=95), MDA	1) Studytime; 2) G3; 3) Fedu; 4) Goout; 5) Failures
+Random Forest (m=8, ntrees=95), MDG	1) Studytime; 2) G3; 3) Fedu; 4) Goout; 5) Medu
+
+G3 (result) is consistently one of the most important features both in the logistic regression model and the random forest model. This is expected, as the result of the student is understandably a significant determinant for the student to aspire to pursue higher education. We have removed a bunch of features from the logistic regression as they had multicollinearity issues, and then the stepwise model has removed some other features. So, the difference between the logistic regression model and the random forest model in terms of the set of important features is explainable and not surprising. By design, the Mean Decrease Accuracy (MDA) and Mean Decrease Gini (MDG) have different ways of measuring how much a variable contributes to the overall accuracy of the Random Forest model. So, although they agree on the first 4 most important features, they disagree on the fifth one. 
+
