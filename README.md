@@ -21,4 +21,7 @@ We obtained a dataset containing information on academic performances, social ch
 
 ## Raw Data Characteristics:
 1,044 observations; 33 total variables 
-Binary Response: ‘higher’ “Yes”: 955 “No”: 89
+Binary Response: ‘higher’ “Yes”: 955 “No”: 89 
+
+### How does the data look like? 
+<img src="https://ibb.co/p1Pr0Pd" alt="Dataset Head">
