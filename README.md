@@ -24,18 +24,18 @@ We obtained a dataset containing information on academic performances, social ch
 Binary Response: ‘higher’ “Yes”: 955 “No”: 89 
 
 ### Findings:
-#### Method	and their Misclassification Error Rates: 
-Ordinary QDA 		0.2643
-QDA With Leave One Out Cross-Validation		0.2786
-QDA With 10-fold Cross-Validation		0.2857
-Logistic regression (Predictors= address, famsup, tutoring, G3)	0.2738
-Classification tree (unpruned) 	0.0833
-Classification tree (pruned, 4 terminal nodes)	0.2262
-Random Forest (m=24, ntrees=500)	0.1786
-Random Forest (m=8, ntrees=95)	0.2143
-Support Vector Machines (Cost=5) 	0.2737
-Naive Bayes Classifier	0.1428
-Neural Networks (4 Hidden Layers)	0.0178
+#### Method	and their Misclassification Error Rates:  <br>
+Ordinary QDA 		0.2643 <br>
+QDA With Leave One Out Cross-Validation		0.2786 <br>
+QDA With 10-fold Cross-Validation		0.2857 <br>
+Logistic regression (Predictors= address, famsup, tutoring, G3)	0.2738 <br>
+Classification tree (unpruned) 	0.0833 <br>
+Classification tree (pruned, 4 terminal nodes)	0.2262 <br>
+Random Forest (m=24, ntrees=500)	0.1786 <br>
+Random Forest (m=8, ntrees=95)	0.2143 <br>
+Support Vector Machines (Cost=5) 	0.2737 <br>
+Naive Bayes Classifier	0.1428 <br>
+Neural Networks (4 Hidden Layers)	0.0178 <br>
 
 We implemented the ordinary QDA without cross-validations. Hence, among the three QDA methods, it has the lowest error rate. QDA with leave-one-out cross-validation used almost all the data for testing, resulting in a lower error rate than QDA with 10-fold cross-validation. 
 
@@ -51,10 +51,10 @@ In contrast, the Naive Bayes Classifier has demonstrated impressive performance 
 
 Finally, with little wonder, our Neural Networks model outperformed every method by a big margin. By design, Neural Networks are inherently non-linear models, can handle complex datasets and complex relationships among variables. It’s proven that Neural Network almost always performs better than most of the classification techniques.
 
-#### Methods and the Most Important Features
-Logistic regression 	1) G3; 2) Tutoring; 3) Address; 4) Famsup
-Random Forest (m=8, ntrees=95), MDA	1) Studytime; 2) G3; 3) Fedu; 4) Goout; 5) Failures
-Random Forest (m=8, ntrees=95), MDG	1) Studytime; 2) G3; 3) Fedu; 4) Goout; 5) Medu
+#### Methods and the Most Important Features <br>
+Logistic regression 	1) G3; 2) Tutoring; 3) Address; 4) Famsup <br>
+Random Forest (m=8, ntrees=95), MDA	1) Studytime; 2) G3; 3) Fedu; 4) Goout; 5) Failures <br>
+Random Forest (m=8, ntrees=95), MDG	1) Studytime; 2) G3; 3) Fedu; 4) Goout; 5) Medu <br>
 
 G3 (result) is consistently one of the most important features both in the logistic regression model and the random forest model. This is expected, as the result of the student is understandably a significant determinant for the student to aspire to pursue higher education. We have removed a bunch of features from the logistic regression as they had multicollinearity issues, and then the stepwise model has removed some other features. So, the difference between the logistic regression model and the random forest model in terms of the set of important features is explainable and not surprising. By design, the Mean Decrease Accuracy (MDA) and Mean Decrease Gini (MDG) have different ways of measuring how much a variable contributes to the overall accuracy of the Random Forest model. So, although they agree on the first 4 most important features, they disagree on the fifth one. 
 
