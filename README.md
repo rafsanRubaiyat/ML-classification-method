@@ -1,3 +1,4 @@
+## Full report can be found here: https://drive.google.com/file/d/1eFIUoX1UZ2dowTc9dOvNWFddC-JY86Qq/view?usp=sharing 
 # ML-classification-method
 In this study, we have gathered data from high schools in Portugal, which included details about social and school-related features for each student. Our main goal is to implement and compare various ML classification methods to predict whether a student is likely to pursue higher education based on the pertinent factors found in our dataset.  
 
@@ -101,4 +102,18 @@ Random Forest (m=8, ntrees=95), MDA	1) Studytime; 2) G3; 3) Fedu; 4) Goout; 5) F
 Random Forest (m=8, ntrees=95), MDG	1) Studytime; 2) G3; 3) Fedu; 4) Goout; 5) Medu <br>
 
 G3 (result) is consistently one of the most important features both in the logistic regression model and the random forest model. This is expected, as the result of the student is understandably a significant determinant for the student to aspire to pursue higher education. We have removed a bunch of features from the logistic regression as they had multicollinearity issues, and then the stepwise model has removed some other features. So, the difference between the logistic regression model and the random forest model in terms of the set of important features is explainable and not surprising. By design, the Mean Decrease Accuracy (MDA) and Mean Decrease Gini (MDG) have different ways of measuring how much a variable contributes to the overall accuracy of the Random Forest model. So, although they agree on the first 4 most important features, they disagree on the fifth one. 
+
+### Directions on further investigation
+
+Firstly, it's important to note that the dataset used in this project was relatively small. To gain a comprehensive understanding and facilitate meaningful comparisons of the methods employed, we need a substantially larger dataset or consider acquiring additional data for this project. 
+
+Hyperparameter tuning for SVM, and other classification methods may provide a better understanding of the algorithms and a better result. We can also investigate ensemble techniques like stacking or boosting, and by combining the strengths of multiple models we can improve predictive performance further. When the dataset is large, we may try different cross-validation techniques, such as stratified sampling, or bootstrapping, to assess model stability and generalization capacity.
+
+L2 regularization can be used to prevent overfitting and improve the generalization ability of the logistic regression model. L2 regularization based on the L2 norm would penalize large values of the coefficients, effectively shrinking them towards zero. This will help prevent overfitting by reducing the model's complexity (Phaisangittisagul, E., 2016).
+Finally, in addition to misclassification errors, the ROC (Receiver Operating Characteristic) curve needs to be used for evaluating and comparing the performance of the classification models.  
+
+### Conclusion
+
+The choice of classification method should be considered based on the dataset's nature and complexity. While simpler models like logistic regression may be enough for certain problems, more complex models like Neural Networks can offer substantial performance gains when dealing with complex data and relationships.  
+
 
