@@ -1,5 +1,5 @@
 # ML-classification-method
-We have implemented different ML classification methods to predict whether a student would like to go to college based on many of the other features. Then, we have compared the performance of the methods.
+In this study, we have gathered data from high schools in Portugal, which included details about social and school-related features for each student. Our main goal is to implement and compare various ML classification methods to predict whether a student is likely to pursue higher education based on the pertinent factors found in our dataset.  
 
 ## Contributors
 Burke Grey, Ryan McAllister, Rafsan Siddiqui
@@ -25,7 +25,23 @@ Binary Response: ‘higher’ “Yes”: 955 “No”: 89
 
 ### Findings:
 #### Method	and their Misclassification Error Rates:  <br>
-Ordinary QDA 		0.2643 <br>
+<table>
+  <tr>
+    <th>Classification Method</th>
+    <th>Misclassification Error Rate</th>
+  </tr>
+  <tr>
+    <td>Ordinary QDA</td>
+    <td>Maria Anders</td>
+    <td>Germany</td>
+  </tr>
+  <tr>
+    <td>Centro comercial Moctezuma</td>
+    <td>Francisco Chang</td>
+    <td>Mexico</td>
+  </tr>
+</table>
+ 		0.2643 <br>
 QDA With Leave One Out Cross-Validation		0.2786 <br>
 QDA With 10-fold Cross-Validation		0.2857 <br>
 Logistic regression (Predictors= address, famsup, tutoring, G3)	0.2738 <br>
