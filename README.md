@@ -32,26 +32,54 @@ Binary Response: ‘higher’ “Yes”: 955 “No”: 89
   </tr>
   <tr>
     <td>Ordinary QDA</td>
-    <td>Maria Anders</td>
-    <td>Germany</td>
+    <td>0.2643</td>
   </tr>
   <tr>
-    <td>Centro comercial Moctezuma</td>
-    <td>Francisco Chang</td>
-    <td>Mexico</td>
+    <td>QDA With Leave One Out Cross-Validation</td>
+    <td>0.2786</td>
   </tr>
+    <tr>
+    <td>QDA With 10-fold Cross-Validation	 </td> 
+    <td>0.2857</td>
+  </tr>
+    <tr>
+    <td>Logistic regression</td>
+    <td>0.2738</td>
+  </tr>
+    <tr>
+    <td>Classification tree (unpruned) 	</td>
+    <td>0.0833</td>
+  </tr>
+    <tr>
+    <td>Classification tree (pruned, 4 terminal nodes)	</td>
+    <td>0.2262</td>
+  </tr>
+    <tr>
+    <td>Random Forest (m=24, ntrees=500)	</td>
+    <td>0.1786</td>
+  </tr>
+    <tr>
+    <td>Random Forest (m=8, ntrees=95)	</td>
+    <td>0.2143 </td>
+  </tr>
+    <tr>
+    <td>Support Vector Machines (Cost=5) 	</td>
+    <td>0.2737</td>
+  </tr>
+    </tr>
+    <tr>
+    <td>Naive Bayes Classifier	  	</td>
+    <td>0.1428</td>
+  </tr>
+    </tr>
+    <tr>
+    <td>Neural Networks (4 Hidden Layers)	</td>
+    <td>0.0178</td>
+  </tr>
+  
 </table>
- 		0.2643 <br>
-QDA With Leave One Out Cross-Validation		0.2786 <br>
-QDA With 10-fold Cross-Validation		0.2857 <br>
-Logistic regression (Predictors= address, famsup, tutoring, G3)	0.2738 <br>
-Classification tree (unpruned) 	0.0833 <br>
-Classification tree (pruned, 4 terminal nodes)	0.2262 <br>
-Random Forest (m=24, ntrees=500)	0.1786 <br>
-Random Forest (m=8, ntrees=95)	0.2143 <br>
-Support Vector Machines (Cost=5) 	0.2737 <br>
-Naive Bayes Classifier	0.1428 <br>
-Neural Networks (4 Hidden Layers)	0.0178 <br>
+ 		 <br>
+
 
 We implemented the ordinary QDA without cross-validations. Hence, among the three QDA methods, it has the lowest error rate. QDA with leave-one-out cross-validation used almost all the data for testing, resulting in a lower error rate than QDA with 10-fold cross-validation. 
 
