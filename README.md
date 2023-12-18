@@ -4,7 +4,7 @@ Full report can be found <a href="https://drive.google.com/file/d/1eFIUoX1UZ2dow
 In this study, we have gathered data from high schools in Portugal, which included details about social and school-related features for each student. Our main goal is to implement and compare various ML classification methods to predict whether a student is likely to pursue higher education based on the pertinent factors found in our dataset.  
 
 ## Contributors
-Burke Grey, Ryan McAllister, Rafsan Siddiqui
+<a href="https://github.com/burkedgray" target="_blank">Burke Grey</a>, Ryan McAllister, Rafsan Siddiqui
 
 ## Contents
 - Introduction/Cleaning 
